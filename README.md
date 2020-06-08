@@ -27,3 +27,7 @@ TODO: make steps better, provide executable.
 * More builds!
 * Custom hotkeys
 * Custom window location
+
+## License
+
+[](LICENSE.txt)
