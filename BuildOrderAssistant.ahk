@@ -55,7 +55,7 @@ SelectedBuild :=	 ""	; The picked build orer
 	Hotkey to toggle the overlay on and off. Start here.
 	When toggling off, any build progress is lost.
 */
-^!c::
+^!a::
 if WinExist("AHK Pick Build Window") or WinExist("AHK Build Progress Window")
 	WinKill
 else
@@ -65,6 +65,7 @@ return
 /*
 	Move to the next build step.
 */
+!XButton1::
 ^!z::
 RemoveProgress()
 return
@@ -72,6 +73,7 @@ return
 /*
 	Move to the previous build step.
 */
+!XButton2::
 ^!x:: 
 AddProgress()
 return
@@ -109,7 +111,11 @@ ShowBuildProgress() {
 	global 
 	StepIndex := 1
 	local maxLen := SelectedBuild.Steps.Length()
-	Progress b w230 x900 y0 r%StepIndex%-%maxLen% p%StepIndex%, % (SelectedBuild.Steps[StepIndex]), % SelectedBuild.Name, % "AHK Build Progress Window"
+	Gui, BoGui:New,, AHK Build Order Window
+	Gui, Add, Progress, w200 h50 Range0-%maxLen% vMyProgress, %StepIndex%
+	gui, Add, Text, vMyText w200, % (SelectedBuild.Steps[StepIndex])
+	Gui, Show, w230 h100 x543 y65
+	; Progress b w230 x543 y65 r%StepIndex%-%maxLen% p%StepIndex%, % (SelectedBuild.Steps[StepIndex]), % SelectedBuild.Name, % "AHK Build Progress Window"
 }
 
 AddProgress() {
@@ -117,7 +123,8 @@ AddProgress() {
 	if (StepIndex < SelectedBuild.Steps.Length()) {
 		StepIndex := StepIndex + 1
 	}
-	Progress, %StepIndex%, % (SelectedBuild.Steps[StepIndex])
+	UpdateProgress()
+	;Progress, %StepIndex%, % (SelectedBuild.Steps[StepIndex])
 }
 
 RemoveProgress() {
@@ -125,5 +132,14 @@ RemoveProgress() {
 	if (StepIndex > 1) {
 		StepIndex := StepIndex - 1
 	}
-	Progress, %StepIndex%, % (SelectedBuild.Steps[StepIndex])
+	UpdateProgress()	
+	;Progress, %StepIndex%, % (SelectedBuild.Steps[StepIndex])
+}
+
+UpdateProgress() {
+	global
+	;MsgBox % (SelectedBuild.Steps[StepIndex])
+	Gui, BoGui:Default
+	GuiControl,,MyText,% (SelectedBuild.Steps[StepIndex])
+	GuiControl,,MyProgress, % StepIndex
 }
